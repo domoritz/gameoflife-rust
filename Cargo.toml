@@ -1,0 +1,12 @@
+[package]
+name = "game-of-life"
+version = "0.1.0"
+authors = ["Dominik Moritz <domoritz@gmail.com>"]
+
+[lib]
+name = "gollib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "game"
+path = "src/main.rs"
