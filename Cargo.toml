@@ -2,6 +2,8 @@
 name = "game-of-life"
 version = "0.1.0"
 authors = ["Dominik Moritz <domoritz@gmail.com>"]
+license = "MIT"
+readme = "Readme.md"
 
 [lib]
 name = "gollib"
