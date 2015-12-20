@@ -12,11 +12,11 @@ Implementation of [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway's
 ## Run an example
 
 ```
-cargo run
+cargo run --verbose
 ```
 
 ## Run the tests
 
 ```
-cargo test
+cargo test --verbose
 ```
