@@ -10,17 +10,20 @@ pub struct Cell {
 }
 
 pub struct Field(HashSet<Cell>);
-pub type Counts = HashMap<Cell, u64>;
-pub type Neighbors = [Cell; 8];
+
+type Counts = HashMap<Cell, u64>;
+type Neighbors = [Cell; 8];
 
 
-pub fn get_neighbors(cell: &Cell, neighbors: &mut Neighbors) {
-    let mut i = 0;
-    for x in cell.x - 1..cell.x + 2 {
-        for y in cell.y - 1..cell.y + 2 {
-            if (x, y) != (cell.x, cell.y) {
-                neighbors[i] = Cell { x: x, y: y };
-                i = i + 1;
+impl Cell {
+    fn neighbors(&self, neighbors: &mut Neighbors) {
+        let mut i = 0;
+        for x in self.x - 1..self.x + 2 {
+            for y in self.y - 1..self.y + 2 {
+                if (x, y) != (self.x, self.y) {
+                    neighbors[i] = Cell { x: x, y: y };
+                    i += 1;
+                }
             }
         }
     }
@@ -34,8 +37,8 @@ impl Field {
     pub fn new(desc: &str) -> Field {
         let mut field = Field(HashSet::new());
 
-        for (x, line) in desc.split('\n').enumerate() {
-            for (y, elem) in line.chars().enumerate() {
+        for (y, line) in desc.split('\n').enumerate() {
+            for (x, elem) in line.chars().enumerate() {
                 if elem == 'X' {
                     field.0.insert(Cell {
                         x: x as i64,
@@ -57,13 +60,16 @@ impl Field {
 
         let mut neighbors: Neighbors = [Cell { x: 10, y: 10 }; 8];
         for cell in &self.0 {
-            get_neighbors(cell, &mut neighbors);
+            cell.neighbors(&mut neighbors);
             for neighbor in &neighbors {
-                if counts.contains_key(neighbor) {
-                    if let Some(x) = counts.get_mut(neighbor) {
-                        *x += 1;
+                let found = match counts.get_mut(neighbor) {
+                    Some(count) => {
+                        *count += 1;
+                        true
                     }
-                } else {
+                    None => false,
+                };
+                if !found {
                     counts.insert(*neighbor, 1);
                 }
             }
@@ -132,18 +138,25 @@ impl fmt::Display for Field {
 mod tests {
     use std::collections::HashMap;
 
-    use super::get_neighbors;
     use super::Cell;
-    use super::Counts;
-    use super::Neighbors;
     use super::Field;
 
     #[test]
+    fn create_cell() {
+        let x = 1;
+        let y = 2;
+        let cell = Cell { x: x, y: y };
+        assert_eq!(x, cell.x);
+        assert_eq!(y, cell.y);
+    }
+
+    #[test]
     fn generate_board() {
-        let description = "X.\n.X";
+        let description = "X..\n.XX";
         let mut expected = Field::empty();
         expected.add(Cell { x: 0, y: 0 });
         expected.add(Cell { x: 1, y: 1 });
+        expected.add(Cell { x: 2, y: 1 });
 
         let actual = Field::new(description);
         assert_eq!(expected.0, actual.0);
@@ -152,8 +165,8 @@ mod tests {
     #[test]
     fn neighbors_works() {
         let cell = Cell { x: 0, y: 1 };
-        let mut actual: Neighbors = [Cell { x: 10, y: 10 }; 8];
-        let expected: Neighbors = [Cell { x: -1, y: 0 },
+        let mut actual = [Cell { x: 10, y: 10 }; 8];
+        let expected = [Cell { x: -1, y: 0 },
                                    Cell { x: -1, y: 1 },
                                    Cell { x: -1, y: 2 },
                                    Cell { x: 0, y: 0 },
@@ -161,19 +174,16 @@ mod tests {
                                    Cell { x: 1, y: 0 },
                                    Cell { x: 1, y: 1 },
                                    Cell { x: 1, y: 2 }];
-        get_neighbors(&cell, &mut actual);
+        cell.neighbors(&mut actual);
         assert_eq!(expected, actual);
     }
 
     #[test]
     fn neighbor_counts_work() {
-        let mut field = Field::empty();
-        field.add(Cell { x: 0, y: 0 });
-        field.add(Cell { x: 1, y: 1 });
+        let field = Field::new("X.\n.X");
 
         let actual = field.neighbor_counts();
-
-        let mut expected: Counts = HashMap::new();
+        let mut expected = HashMap::new();
 
         expected.insert(Cell { x: 2, y: 2 }, 1);
         expected.insert(Cell { x: 2, y: 0 }, 1);
