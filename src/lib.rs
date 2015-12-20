@@ -3,6 +3,9 @@ use std::fmt::Write;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
+#[macro_use]
+extern crate maplit;
+
 #[derive(Hash, Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Cell {
     pub x: i64,
@@ -144,8 +147,6 @@ impl fmt::Display for Field {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
-
     use super::Cell;
     use super::Field;
 
@@ -173,7 +174,7 @@ mod tests {
     #[test]
     fn neighbors_works() {
         let cell = Cell { x: 0, y: 1 };
-        let mut actual = [Cell { x: 10, y: 10 }; 8];
+        let mut actual = [Cell { x: 0, y: 0 }; 8];
         let expected = [Cell { x: -1, y: 0 },
                         Cell { x: -1, y: 1 },
                         Cell { x: -1, y: 2 },
@@ -191,22 +192,22 @@ mod tests {
         let field = Field::from("X.\n.X");
 
         let actual = field.neighbor_counts();
-        let mut expected = HashMap::new();
-
-        expected.insert(Cell { x: 2, y: 2 }, 1);
-        expected.insert(Cell { x: 2, y: 0 }, 1);
-        expected.insert(Cell { x: 0, y: -1 }, 1);
-        expected.insert(Cell { x: 1, y: 0 }, 2);
-        expected.insert(Cell { x: 0, y: 1 }, 2);
-        expected.insert(Cell { x: 0, y: 0 }, 1);
-        expected.insert(Cell { x: 1, y: 2 }, 1);
-        expected.insert(Cell { x: 1, y: -1 }, 1);
-        expected.insert(Cell { x: 2, y: 1 }, 1);
-        expected.insert(Cell { x: 1, y: 1 }, 1);
-        expected.insert(Cell { x: -1, y: 0 }, 1);
-        expected.insert(Cell { x: 0, y: 2 }, 1);
-        expected.insert(Cell { x: -1, y: 1 }, 1);
-        expected.insert(Cell { x: -1, y: -1 }, 1);
+        let expected = hashmap!{
+            Cell { x: 1, y: 2 } => 1,
+            Cell { x: 1, y: -1 } => 1,
+            Cell { x: 1, y: 0 } => 2,
+            Cell { x: 2, y: 0 } => 1,
+            Cell { x: 0, y: 2 } => 1,
+            Cell { x: 2, y: 1 } => 1,
+            Cell { x: 2, y: 2 } => 1,
+            Cell { x: 0, y: 0 } => 1,
+            Cell { x: 0, y: -1 } => 1,
+            Cell { x: -1, y: 0 } => 1,
+            Cell { x: 0, y: 1 } => 2,
+            Cell { x: 1, y: 1 } => 1,
+            Cell { x: -1, y: 1 } => 1,
+            Cell { x: -1, y: -1 } => 1
+        };
 
         assert_eq!(14, actual.len());
         assert_eq!(expected, actual);

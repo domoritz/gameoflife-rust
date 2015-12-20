@@ -5,6 +5,9 @@ authors = ["Dominik Moritz <domoritz@gmail.com>"]
 license = "MIT"
 readme = "Readme.md"
 
+[dependencies]
+maplit = "0.1.3"
+
 [lib]
 name = "gollib"
 path = "src/lib.rs"
