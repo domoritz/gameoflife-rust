@@ -29,13 +29,19 @@ impl Cell {
     }
 }
 
+trait GameField {
+    fn new() -> Self;
+    fn from(desc: &str) -> Self;
+    fn step() -> Self;
+}
+
 impl Field {
-    fn empty() -> Field {
+    fn new() -> Field {
         return Field(HashSet::new());
     }
 
-    pub fn new(desc: &str) -> Field {
-        let mut field = Field(HashSet::new());
+    pub fn from(desc: &str) -> Field {
+        let mut field = Field::new();
 
         for (y, line) in desc.split('\n').enumerate() {
             for (x, elem) in line.chars().enumerate() {
@@ -79,7 +85,7 @@ impl Field {
     }
 
     pub fn step(&mut self) -> Field {
-        let mut field = Field::empty();
+        let mut field = Field::new();
 
         for (cell, count) in self.neighbor_counts() {
             if count == 3 || self.0.contains(&cell) && count == 2 {
@@ -89,15 +95,11 @@ impl Field {
 
         return field;
     }
-}
 
-impl fmt::Display for Field {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn to_string(&self, f: &mut fmt::Write, padding: i64) -> fmt::Result {
         if self.0.len() == 0 {
             return write!(f, "empty");
         }
-
-        let padding = 2;
 
         let mut minx = i64::max_value();
         let mut maxx = i64::min_value();
@@ -134,6 +136,12 @@ impl fmt::Display for Field {
     }
 }
 
+impl fmt::Display for Field {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        return self.to_string(f, 2);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
@@ -153,12 +161,12 @@ mod tests {
     #[test]
     fn generate_board() {
         let description = "X..\n.XX";
-        let mut expected = Field::empty();
+        let mut expected = Field::new();
         expected.add(Cell { x: 0, y: 0 });
         expected.add(Cell { x: 1, y: 1 });
         expected.add(Cell { x: 2, y: 1 });
 
-        let actual = Field::new(description);
+        let actual = Field::from(description);
         assert_eq!(expected.0, actual.0);
     }
 
@@ -180,7 +188,7 @@ mod tests {
 
     #[test]
     fn neighbor_counts_work() {
-        let field = Field::new("X.\n.X");
+        let field = Field::from("X.\n.X");
 
         let actual = field.neighbor_counts();
         let mut expected = HashMap::new();
@@ -202,5 +210,21 @@ mod tests {
 
         assert_eq!(14, actual.len());
         assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn empty_string() {
+        let actual = format!("{}", Field::new());
+        let expected = "empty";
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn simple_field() {
+        let description = ".X.\nX.X\n";
+        let field = Field::from(description);
+        let mut s = String::new();
+        assert!(field.to_string(&mut s, 0).is_ok());
+        assert_eq!(description, s);
     }
 }

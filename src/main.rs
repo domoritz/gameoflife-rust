@@ -7,7 +7,7 @@ use std::io;
 use gollib::Field;
 
 fn main() {
-    let mut field = Field::new("......X.\nXX......\n.X...XXX");
+    let mut field = Field::from("......X.\nXX......\n.X...XXX");
 
     for _ in 0..130 {
         field = field.step();
