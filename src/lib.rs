@@ -175,13 +175,13 @@ mod tests {
         let cell = Cell { x: 0, y: 1 };
         let mut actual = [Cell { x: 10, y: 10 }; 8];
         let expected = [Cell { x: -1, y: 0 },
-                                   Cell { x: -1, y: 1 },
-                                   Cell { x: -1, y: 2 },
-                                   Cell { x: 0, y: 0 },
-                                   Cell { x: 0, y: 2 },
-                                   Cell { x: 1, y: 0 },
-                                   Cell { x: 1, y: 1 },
-                                   Cell { x: 1, y: 2 }];
+                        Cell { x: -1, y: 1 },
+                        Cell { x: -1, y: 2 },
+                        Cell { x: 0, y: 0 },
+                        Cell { x: 0, y: 2 },
+                        Cell { x: 1, y: 0 },
+                        Cell { x: 1, y: 1 },
+                        Cell { x: 1, y: 2 }];
         cell.neighbors(&mut actual);
         assert_eq!(expected, actual);
     }
@@ -236,5 +236,19 @@ mod tests {
 
         let expected = Field::from(".X\n.X\n.X\n");
         assert_eq!(expected.0, actual.0);
+    }
+
+    #[test]
+    fn glider() {
+        let states = [".X.\n..X\nXXX\n", "X.X\n.XX\n.X.\n", "..X\nX.X\n.XX\n", "X..\n.XX\nXX.\n"];
+        let mut field = Field::from(states[0]);
+
+        for expected in states.iter() {
+            let mut actual = String::new();
+            assert!(field.to_string(&mut actual, 0).is_ok());
+            assert_eq!(*expected, actual);
+
+            field = field.step();
+        }
     }
 }
