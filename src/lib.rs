@@ -84,7 +84,7 @@ impl Field {
         return counts;
     }
 
-    pub fn step(&mut self) -> Field {
+    pub fn step(&self) -> Field {
         let mut field = Field::new();
 
         for (cell, count) in self.neighbor_counts() {
@@ -223,8 +223,18 @@ mod tests {
     fn simple_field() {
         let description = ".X.\nX.X\n";
         let field = Field::from(description);
-        let mut s = String::new();
-        assert!(field.to_string(&mut s, 0).is_ok());
-        assert_eq!(description, s);
+        let mut actual = String::new();
+        assert!(field.to_string(&mut actual, 0).is_ok());
+        assert_eq!(description, actual);
+    }
+
+    #[test]
+    fn simple_step() {
+        let description = "...\nXXX\n...";
+        let field = Field::from(description);
+        let actual = field.step();
+
+        let expected = Field::from(".X\n.X\n.X\n");
+        assert_eq!(expected.0, actual.0);
     }
 }
