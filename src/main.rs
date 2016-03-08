@@ -1,6 +1,7 @@
 extern crate gollib;
 
-use std::thread::sleep_ms;
+use std::time::Duration;
+use std::thread::sleep;
 use std::io::prelude::*;
 use std::io;
 
@@ -14,6 +15,6 @@ fn main() {
         print!("\x1b[2J\x1b[1;1H");
         print!("{}\n", field);
         io::stdout().flush().ok().expect("Could not flush stdout");
-        sleep_ms(100);
+        sleep(Duration::from_millis(100));
     }
 }
