@@ -1,7 +1,6 @@
 #![feature(test)]
 
 use std::fmt;
-use std::fmt::Write;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::cmp::min;
