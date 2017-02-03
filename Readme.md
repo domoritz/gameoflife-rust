@@ -7,13 +7,13 @@ Implementation of [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway's
 
 * Why is there no fast way to initialize maps or sets in tests? I have to create the set and then insert a bunch of elements.
 * `rustfmt` is slow so I cannot run it every time I save.
-* Why do I need nightlies to run tests?
+* Why do I need nightlies to run benchmarks/tests?
 
 
 ## Use nightlies
 
 ```
-multirust override nightly
+rustup override set nightly
 ```
 
 ## Run an example
