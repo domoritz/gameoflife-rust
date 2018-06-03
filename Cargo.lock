@@ -1,0 +1,14 @@
+[[package]]
+name = "game-of-life"
+version = "0.1.0"
+dependencies = [
+ "maplit 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "maplit"
+version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[metadata]
+"checksum maplit 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "22593015b8df7747861c69c28acd32589fb96c1686369f3b661d12e409d4cf65"
