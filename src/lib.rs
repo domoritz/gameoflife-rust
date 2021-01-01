@@ -1,9 +1,9 @@
-use std::fmt;
-use std::fmt::Write;
+use std::cmp::max;
+use std::cmp::min;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::fmt;
 
-#[macro_use]
 extern crate maplit;
 
 #[derive(Hash, Debug, Copy, Clone, PartialEq, Eq)]
@@ -16,7 +16,6 @@ pub struct Field(HashSet<Cell>);
 
 type Counts = HashMap<Cell, u64>;
 type Neighbors = [Cell; 8];
-
 
 impl Cell {
     fn neighbors(&self, neighbors: &mut Neighbors) {
@@ -99,7 +98,7 @@ impl Field {
         return field;
     }
 
-    fn to_string(&self, f: &mut fmt::Write, padding: i64) -> fmt::Result {
+    fn to_string(&self, f: &mut dyn fmt::Write, padding: i64) -> fmt::Result {
         if self.0.len() == 0 {
             return write!(f, "empty");
         }
@@ -110,29 +109,21 @@ impl Field {
         let mut maxy = i64::min_value();
 
         for cell in &self.0 {
-            if cell.x < minx {
-                minx = cell.x;
-            }
-            if cell.x > maxx {
-                maxx = cell.x;
-            }
-            if cell.y < miny {
-                miny = cell.y;
-            }
-            if cell.y > maxy {
-                maxy = cell.y;
-            }
+            minx = min(minx, cell.x);
+            maxx = max(maxx, cell.x);
+            miny = min(miny, cell.y);
+            maxy = max(maxy, cell.y);
         }
 
         for y in miny - padding..maxy + 1 + padding {
             for x in minx - padding..maxx + 1 + padding {
                 if self.0.contains(&Cell { x: x, y: y }) {
-                    try!(f.write_char('X'));
+                    f.write_char('X').unwrap();
                 } else {
-                    try!(f.write_char('.'));
+                    f.write_char('.').unwrap();
                 }
             }
-            try!(f.write_char('\n'));
+            f.write_char('\n').unwrap();
         }
 
         write!(f, "")
@@ -149,6 +140,8 @@ impl fmt::Display for Field {
 mod tests {
     use super::Cell;
     use super::Field;
+
+    use maplit::hashmap;
 
     #[test]
     fn create_cell() {
@@ -175,14 +168,16 @@ mod tests {
     fn neighbors_works() {
         let cell = Cell { x: 0, y: 1 };
         let mut actual = [Cell { x: 0, y: 0 }; 8];
-        let expected = [Cell { x: -1, y: 0 },
-                        Cell { x: -1, y: 1 },
-                        Cell { x: -1, y: 2 },
-                        Cell { x: 0, y: 0 },
-                        Cell { x: 0, y: 2 },
-                        Cell { x: 1, y: 0 },
-                        Cell { x: 1, y: 1 },
-                        Cell { x: 1, y: 2 }];
+        let expected = [
+            Cell { x: -1, y: 0 },
+            Cell { x: -1, y: 1 },
+            Cell { x: -1, y: 2 },
+            Cell { x: 0, y: 0 },
+            Cell { x: 0, y: 2 },
+            Cell { x: 1, y: 0 },
+            Cell { x: 1, y: 1 },
+            Cell { x: 1, y: 2 },
+        ];
         cell.neighbors(&mut actual);
         assert_eq!(expected, actual);
     }
@@ -192,7 +187,7 @@ mod tests {
         let field = Field::from("X.\n.X");
 
         let actual = field.neighbor_counts();
-        let expected = hashmap!{
+        let expected = hashmap! {
             Cell { x: 1, y: 2 } => 1,
             Cell { x: 1, y: -1 } => 1,
             Cell { x: 1, y: 0 } => 2,
@@ -241,7 +236,12 @@ mod tests {
 
     #[test]
     fn glider() {
-        let states = [".X.\n..X\nXXX\n", "X.X\n.XX\n.X.\n", "..X\nX.X\n.XX\n", "X..\n.XX\nXX.\n"];
+        let states = [
+            ".X.\n..X\nXXX\n",
+            "X.X\n.XX\n.X.\n",
+            "..X\nX.X\n.XX\n",
+            "X..\n.XX\nXX.\n",
+        ];
         let mut field = Field::from(states[0]);
 
         for expected in states.iter() {

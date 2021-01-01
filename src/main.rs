@@ -1,9 +1,9 @@
 extern crate gollib;
 
-use std::time::Duration;
-use std::thread::sleep;
-use std::io::prelude::*;
 use std::io;
+use std::io::prelude::*;
+use std::thread::sleep;
+use std::time::Duration;
 
 use gollib::Field;
 
