@@ -5,11 +5,18 @@ Implementation of [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway's
 I am implementing the Game of Life in different programming languages to learn about them. You can find [all of my implementations on GitHub](https://github.com/domoritz?tab=repositories&q=gameoflife).
 
 
-### What I learned/liked/disliked about rust
+## What I learned/liked/disliked about rust
 
 * Why is there no fast way to initialize maps or sets in tests? I have to create the set and then insert a bunch of elements.
 * `rustfmt` is slow so I cannot run it every time I save.
+* Why do I need nightlies to run benchmarks/tests?
 
+
+## Use nightlies
+
+```
+rustup override set nightly
+```
 
 ## Run an example
 
@@ -20,5 +27,5 @@ cargo run --verbose
 ## Run the tests
 
 ```
-cargo test --verbose
+cargo test
 ```

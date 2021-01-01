@@ -1,7 +1,12 @@
+#![feature(test)]
+
 use std::fmt;
-use std::fmt::Write;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::cmp::min;
+use std::cmp::max;
+
+extern crate test;
 
 #[macro_use]
 extern crate maplit;
@@ -110,18 +115,10 @@ impl Field {
         let mut maxy = i64::min_value();
 
         for cell in &self.0 {
-            if cell.x < minx {
-                minx = cell.x;
-            }
-            if cell.x > maxx {
-                maxx = cell.x;
-            }
-            if cell.y < miny {
-                miny = cell.y;
-            }
-            if cell.y > maxy {
-                maxy = cell.y;
-            }
+            minx = min(minx, cell.x);
+            maxx = max(maxx, cell.x);
+            miny = min(miny, cell.y);
+            maxy = max(maxy, cell.y);
         }
 
         for y in miny - padding..maxy + 1 + padding {
@@ -147,8 +144,9 @@ impl fmt::Display for Field {
 
 #[cfg(test)]
 mod tests {
-    use super::Cell;
-    use super::Field;
+    use super::*;
+    use test::Bencher;
+    use test::black_box;
 
     #[test]
     fn create_cell() {
@@ -251,5 +249,17 @@ mod tests {
 
             field = field.step();
         }
+    }
+
+    #[bench]
+    fn diehart(b: &mut Bencher) {
+        b.iter(|| {
+            let mut field = Field::from("......X.\nXX......\n.X...XXX");
+            for _ in 0..130 {
+                field = field.step();
+            }
+            // make sure the optimizer does not remove the benchmark
+            black_box(&field);
+        });
     }
 }
