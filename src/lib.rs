@@ -21,7 +21,7 @@ impl Cell {
         for x in self.x - 1..self.x + 2 {
             for y in self.y - 1..self.y + 2 {
                 if (x, y) != (self.x, self.y) {
-                    neighbors[i] = Cell { x: x, y: y };
+                    neighbors[i] = Cell { x, y };
                     i += 1;
                 }
             }
@@ -37,7 +37,7 @@ trait GameField {
 
 impl Field {
     fn new() -> Field {
-        return Field(HashSet::new());
+        Field(HashSet::new())
     }
 
     pub fn from(desc: &str) -> Field {
@@ -54,7 +54,7 @@ impl Field {
             }
         }
 
-        return field;
+        field
     }
 
     fn add(&mut self, cell: Cell) {
@@ -79,7 +79,7 @@ impl Field {
             }
         }
 
-        return counts;
+        counts
     }
 
     pub fn step(&self) -> Field {
@@ -91,11 +91,11 @@ impl Field {
             }
         }
 
-        return field;
+        field
     }
 
     fn to_string(&self, f: &mut dyn fmt::Write, padding: i64) -> fmt::Result {
-        if self.0.len() == 0 {
+        if self.0.is_empty() {
             return write!(f, "empty");
         }
 
@@ -113,7 +113,7 @@ impl Field {
 
         for y in miny - padding..maxy + 1 + padding {
             for x in minx - padding..maxx + 1 + padding {
-                if self.0.contains(&Cell { x: x, y: y }) {
+                if self.0.contains(&Cell { x, y }) {
                     f.write_char('X').unwrap();
                 } else {
                     f.write_char('.').unwrap();
@@ -128,7 +128,7 @@ impl Field {
 
 impl fmt::Display for Field {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        return self.to_string(f, 2);
+        self.to_string(f, 2)
     }
 }
 

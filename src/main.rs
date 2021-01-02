@@ -13,8 +13,8 @@ fn main() {
     for _ in 0..130 {
         field = field.step();
         print!("\x1b[2J\x1b[1;1H");
-        print!("{}\n", field);
-        io::stdout().flush().ok().expect("Could not flush stdout");
+        println!("{}", field);
+        io::stdout().flush().expect("Could not flush stdout");
         sleep(Duration::from_millis(100));
     }
 }
