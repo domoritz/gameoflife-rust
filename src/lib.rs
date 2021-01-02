@@ -64,20 +64,18 @@ impl Field {
     fn neighbor_counts(&self) -> Counts {
         let mut counts: Counts = HashMap::new();
 
-        let mut neighbors: Neighbors = [Cell { x: 10, y: 10 }; 8];
+        let mut neighbors: Neighbors = [Cell { x: 0, y: 0 }; 8];
         for cell in &self.0 {
             cell.neighbors(&mut neighbors);
             for neighbor in &neighbors {
-                let found = match counts.get_mut(neighbor) {
+                match counts.get_mut(neighbor) {
                     Some(count) => {
                         *count += 1;
-                        true
                     }
-                    None => false,
+                    None => {
+                        counts.insert(*neighbor, 1);
+                    },
                 };
-                if !found {
-                    counts.insert(*neighbor, 1);
-                }
             }
         }
 
