@@ -1,7 +1,5 @@
-use std::cmp::max;
-use std::cmp::min;
-use std::collections::HashMap;
-use std::collections::HashSet;
+use std::cmp::{max, min};
+use std::collections::{HashMap, HashSet};
 use std::fmt;
 
 extern crate maplit;
